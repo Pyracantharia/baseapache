@@ -1,0 +1,24 @@
+version: "6.1.2"
+
+services:
+  web:
+    build: www
+    ports:
+      - "80:80"
+    volumes:
+      - ./www:/var/www/html/
+      - ./server/000-default.conf:/etc/apache2/sites-available/000-default.conf
+      - ./server/apache2.conf:/etc/apache2/apache2.conf
+      - ./server/php.ini:/usr/local/etc/php/php.ini
+
+  postgres:
+    image: postgres:16-alpine
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: per
+      POSTGRES_USER: root
+    volumes:
+      - ./.postgres_data:/var/lib/postgresql/data
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./postgres/inserts.sql:/docker-entrypoint-initdb.d/inserts.sql
